@@ -1,0 +1,240 @@
+backend:
+  name: github
+  branch: master # Branch to update (optional; defaults to master)
+  repo: hackerstolz/netlifyCMS_Test
+  #repo: saschatu/Netlify_Test_Content
+
+# media_folder: "" # Media files will be stored in the repo under images/uploads
+media_folder: "static/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "hackathon" # Used in routes
+    label: "Hackathon" # Used in the UI
+    folder: "content/hackathons" # The path to the folder where the documents are stored
+    create: true # Allow users to create new documents in this collection
+    #format: json
+    slug: "{{slug}}"
+    identifier_field: id
+    summary: "{{title}} ({{id}})"
+    fields:
+      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Active", name: "active", widget: "boolean", default: false}
+      - label: "Logo"
+        name: "logo"
+        widget: "image"
+        required: false
+        media_library:
+          config:
+            max_file_size: 256000 # 250kb
+      - label: Descriptions
+        name: descriptions
+        widget: list
+        fields:
+          - {label: Language, name: language, widget: select, options: ["DE", "EN"], default: "DE"}
+          - {label: Description, name: description, widget: markdown}
+      - label: Prices
+        name: prices
+        widget: list
+        required: false
+        fields:
+          - label: Price
+            name: price
+            widget: "relation"
+            collection: "price"
+            searchFields: ["id", "title"]
+            valueField: "id"
+            displayFields: ["title"]
+  - name: "challenge"
+    label: "Challenge"
+    folder: "content/challenges"
+    create: true
+    #format: json
+    slug: "{{slug}}"
+    identifier_field: id
+    summary: "{{title}} ({{id}})"
+    fields:
+      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
+      - {label: "Title", name: "title", widget: "string"}
+      - label: Hackathon
+        name: hackathon
+        widget: "relation"
+        collection: "hackathon"
+        searchFields: ["id", "title"]
+        valueField: "id"
+        displayFields: ["title"]
+      - label: Image
+        name: image
+        widget: "image"
+        required: false
+        media_library:
+          config:
+            max_file_size: 512000 # 500kb
+      - label: Descriptions
+        name: descriptions
+        widget: list
+        fields:
+          - {label: Language, name: language, widget: select, options: ["DE", "EN"]}
+          - {label: Description, name: description, widget: markdown}
+      - label: Image
+        name: image
+        widget: "image"
+        required: false
+        media_library:
+          config:
+            max_file_size: 512000 # 500kb
+      - label: Price
+        name: price
+        widget: "relation"
+        required: false
+        collection: "price"
+        searchFields: ["id", "title"]
+        valueField: "id"
+        displayFields: ["title"]
+      - label: Badges
+        name: badges
+        widget: list
+        fields:
+          - label: Badge
+            name: badge
+            widget: "relation"
+            collection: "badge"
+            searchFields: ["id", "title"]
+            valueField: "id"
+            displayFields: ["title"]
+      - label: Categories
+        name: categories
+        widget: list
+        fields:
+          - label: Category
+            name: category
+            widget: "relation"
+            collection: "category"
+            searchFields: ["id", "title"]
+            valueField: "id"
+            displayFields: ["title"]
+  - name: "badge"
+    label: "Badge"
+    folder: "content/badges"
+    create: true
+    #format: json
+    slug: "{{slug}}"
+    identifier_field: id
+    summary: "{{title}} ({{id}})"
+    fields:
+      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
+      - {label: "Title", name: "title", widget: "string"}
+      - label: "Image"
+        name: "image"
+        widget: "image"
+        required: false
+        media_library:
+          config:
+            max_file_size: 256000 # 250kb
+  - name: "category"
+    label: "Category"
+    folder: "content/categories"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: id
+    summary: "{{title}} ({{id}})"
+    fields:
+      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
+      - {label: "Title", name: "title", widget: "string"}
+      - label: "Image"
+        name: "image"
+        widget: "image"
+        media_library:
+          config:
+            max_file_size: 256000 # 250kb
+      - label: Price
+        name: price
+        widget: "relation"
+        required: false
+        collection: "price"
+        searchFields: ["id", "title"]
+        valueField: "id"
+        displayFields: ["title"]
+      - label: Descriptions
+        name: descriptions
+        widget: list
+        fields:
+          - {label: Language, name: language, widget: select, options: ["DE", "EN"]}
+          - {label: Description, name: description, widget: markdown}
+  - name: "price"
+    label: "Price"
+    folder: "content/prices"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: id
+    summary: "{{title}} ({{id}})"
+    fields:
+      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
+      - {label: "Title", name: "title", widget: "string"}
+      - label: Descriptions
+        name: descriptions
+        widget: list
+        fields:
+          - {label: Language, name: language, widget: select, options: ["DE", "EN"]}
+          - {label: Description, name: description, widget: markdown, hint: "Please describe the Price who is applicable and which rules apply."}     
+  - name: "party"
+    label: "Party"
+    folder: "content/parties"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: id
+    summary: "{{name}} ({{id}})"
+    fields:
+      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
+      - {label: "Name", name: "name", widget: "string"}
+      - label: Image
+        name: image
+        widget: "image"
+        required: false
+        media_library:
+          config:
+            max_file_size: 512000 # 500kb
+      - label: Roles
+        name: roles
+        widget: list
+        fields:
+          - label: Hackathon
+            name: hackathon
+            widget: "relation"
+            collection: "hackathon"
+            searchFields: ["id", "title"]
+            valueField: "id"
+            displayFields: ["title"]
+          - label: Role
+            name: role
+            widget: "relation"
+            collection: "role"
+            searchFields: ["id", "title"]
+            valueField: "id"
+            displayFields: ["title"]
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Timeslot", name: "timeslot", widget: "string"}
+          - label: Descriptions
+            name: descriptions
+            widget: list
+            fields:
+              - {label: Language, name: language, widget: select, options: ["DE", "EN"]}
+              - {label: Description, name: description, widget: markdown}              
+  - name: "role"
+    label: "Role"
+    folder: "content/roles"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: id
+    summary: "{{title}} ({{id}})"
+    fields:
+      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
+      - {label: "Title", name: "title", widget: "string"}
+      
+      
+            
+           
+            
+
+      
