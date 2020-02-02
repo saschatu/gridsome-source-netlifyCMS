@@ -1,0 +1,14 @@
+{
+  "id": "a63794eb-9d7a-4ce5-9940-dbd16d845aaf",
+  "title": "Category A ",
+  "descriptions": [
+    {
+      "language": "EN",
+      "description": "An english description"
+    },
+    {
+      "language": "DE",
+      "description": "Eine deutsche Beschreibung"
+    }
+  ]
+}
