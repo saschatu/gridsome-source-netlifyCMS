@@ -1,0 +1,87 @@
+backend:
+  name: github
+  branch: master # Branch to update (optional; defaults to master)
+  repo: saschatu/gridsome-with-netlifyCMS-Template #Put YOUR repo here - first time a login will popup in admin UI
+
+# media_folder: "" # Media files will be stored in the repo under images/uploads
+media_folder: "static/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "hackathon" # Used in routes
+    label: "Hackathon" # Used in the UI
+    folder: "content/hackathons" # The path to the folder where the documents are stored
+    create: true # Allow users to create new documents in this collection
+    format: json
+    slug: "{{slug}}"
+    identifier_field: id
+    summary: "{{title}} ({{id}})"
+    fields:
+      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Active", name: "active", widget: "boolean", default: false}
+      - label: "Logo"
+        name: "logo"
+        widget: "image"
+        required: false
+        media_library:
+          config:
+            max_file_size: 256000 # 250kb
+      - label: Descriptions
+        name: descriptions
+        widget: list
+        fields:
+          - {label: Language, name: language, widget: select, options: ["DE", "EN"], default: "EN"}
+          - {label: Description, name: description, widget: markdown}
+  - name: "challenge"
+    label: "Challenge"
+    folder: "content/challenges"
+    create: true
+    format: json
+    slug: "{{slug}}"
+    identifier_field: id
+    summary: "{{title}} ({{id}})"
+    fields:
+      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
+      - {label: "Title", name: "title", widget: "string"}
+      - label: Hackathon
+        name: hackathon
+        widget: "relation"
+        collection: "hackathon"
+        searchFields: ["id", "title"]
+        valueField: "id"
+        displayFields: ["title"]
+      - label: Descriptions
+        name: descriptions
+        widget: list
+        fields:
+          - {label: Language, name: language, widget: select, options: ["DE", "EN"], default: "EN"}
+          - {label: Description, name: description, widget: markdown}
+      - label: Categories
+        name: categories
+        widget: list
+        fields:
+          - label: Category
+            name: category
+            widget: "relation"
+            collection: "category"
+            searchFields: ["id", "title"]
+            valueField: "id"
+            displayFields: ["title"]
+  - name: "category"
+    label: "Category"
+    folder: "content/categories"
+    format: json
+    create: true
+    slug: "{{slug}}"
+    identifier_field: id
+    summary: "{{title}} ({{id}})"
+    fields:
+      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
+      - {label: "Title", name: "title", widget: "string"}
+      - label: Descriptions
+        name: descriptions
+        widget: list
+        fields:
+          - {label: Language, name: language, widget: select, options: ["DE", "EN"], default: "EN"}
+          - {label: Description, name: description, widget: markdown}

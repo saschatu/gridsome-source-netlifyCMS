@@ -7,6 +7,10 @@
     "explore": "gridsome explore"
   },
   "dependencies": {
-    "gridsome": "^0.7.0"
+    "gridsome": "^0.7.0",
+    "gridsome-plugin-netlify-cms": "^1.0.9",
+    "netlify-cms": "^2.10.13",
+    "parse-md": "^2.0.4",
+    "uuid": "^3.4.0"
   }
 }
