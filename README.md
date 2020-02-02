@@ -1,6 +1,8 @@
 # Gridsome with NetlifyCMS Template
 A gridsome project with netlifyCMS configuration incuding an automatic load of content files into GraphQL based on NetlifyCMS config.yml. Goal is to avoid double maintenance of schema in gridsome and netlifyCMS.
 
+**Note: You have to maintain your own repository in `src\admin\netlify.yml` in line 4 (backend:repo: ... )**
+
 ## Details
 - This project was built via `gridsome create ...` - see https://gridsome.org/docs/
 - And includes the NetlifyCMS: https://www.netlifycms.org/docs/add-to-your-site/
