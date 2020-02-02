@@ -1,0 +1,12 @@
+{
+  "id": "b9af2bfe-a0dd-44c7-8e8e-dba0189dc1fb",
+  "title": "A Hackathon",
+  "active": true,
+  "logo": "/images/uploads/favicon.png",
+  "descriptions": [
+    {
+      "language": "EN",
+      "description": "Only englisch description"
+    }
+  ]
+}
