@@ -12,17 +12,23 @@ A gridsome project with netlifyCMS configuration incuding an automatic load of c
 ### 1) Install Gridsome CLI tool if you don't have
 `npm install --global @gridsome/cli`
 
-### 2) Start Server: 
+### 2) Exchange repository 
+You have to maintain your own repository in `src\admin\netlify.yml` in line 4 (backend:repo: ... )
+
+### 3) Start Server: 
 1) `npm install`  to install dependencies
 2) `gridsome develop` to start a local dev server at `http://localhost:8080` (stop: CTRL+C -> J) 
 
-### 3) Happy coding 🎉🙌
+### 4) Happy coding 🎉🙌
 1) Configure your data model in `static/admin/config.yml` (NetlifyCMS)
 2) Run `http://localhost:8080/admin/` for entering test data
 3) Have fun developing the Frontend using data via GraphQL (Browse: `http://localhost:8080/___explore`)
 
 ## Example Data
 There is a small sample data model maintained for a Hackathon with Challenges and Categories. 
+
+Note: Example data is pulle when cloning this repository and netlifyCMS does directly load into this repository the data. So each time you do change data you need to pull it to your local repo. Then restart gridsome such that it loads the new data as well. After that the new data is available in GraphQL:
+
 Example Query: 
 <pre>
   {
