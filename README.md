@@ -29,7 +29,7 @@ You have to maintain your own repository in `src\admin\netlify.yml` in line 4 (b
 ## Example Data
 There is a small sample data model maintained for a Hackathon with Challenges and Categories. 
 
-Note: Example data is pulle when cloning this repository and netlifyCMS does directly load into this repository the data. So each time you do change data you need to pull it to your local repo. Then restart gridsome such that it loads the new data as well. After that the new data is available in GraphQL:
+Note: Example data is pulled when cloning this repository and netlifyCMS does directly pushes data into the specified repository. So each time you do change data via the admin UI you need to pull it to your local repo. Then restart gridsome such that it loads the new data as well. After that the new data is available in GraphQL.
 
 Example Query: 
 <pre>
