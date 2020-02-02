@@ -22,7 +22,7 @@ You have to maintain your own repository in `src\admin\netlify.yml` in line 4 (b
 2) `gridsome develop` to start a local dev server at `http://localhost:8080` (stop: CTRL+C -> J) 
 
 ### 4) Happy coding 🎉🙌
-1) Configure your data model in `static/admin/config.yml` (NetlifyCMS)
+1) Configure your data model in `static/admin/config.yml` (NetlifyCMS), please define `format: json` for each collection.
 2) Run `http://localhost:8080/admin/` for entering test data
 3) Have fun developing the Frontend using data via GraphQL (Browse: `http://localhost:8080/___explore`)
 
