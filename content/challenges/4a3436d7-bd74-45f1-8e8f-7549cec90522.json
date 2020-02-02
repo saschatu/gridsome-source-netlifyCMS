@@ -1,0 +1,23 @@
+{
+  "id": "4a3436d7-bd74-45f1-8e8f-7549cec90522",
+  "title": "A Challenge",
+  "hackathon": "b9af2bfe-a0dd-44c7-8e8e-dba0189dc1fb",
+  "descriptions": [
+    {
+      "language": "EN",
+      "description": "A challenge with two categories"
+    },
+    {
+      "language": "DE",
+      "description": "Eine Challenge mit zwei Kategorien"
+    }
+  ],
+  "categories": [
+    {
+      "category": "a63794eb-9d7a-4ce5-9940-dbd16d845aaf"
+    },
+    {
+      "category": "cf0f0967-ae8d-47a8-bf4b-9c5569caf672"
+    }
+  ]
+}
