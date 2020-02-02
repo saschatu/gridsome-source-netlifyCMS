@@ -1,0 +1,14 @@
+{
+  "id": "cf0f0967-ae8d-47a8-bf4b-9c5569caf672",
+  "title": "Category B",
+  "descriptions": [
+    {
+      "language": "EN",
+      "description": "Category B description"
+    },
+    {
+      "language": "DE",
+      "description": "Kategorie B Beschreibung"
+    }
+  ]
+}
