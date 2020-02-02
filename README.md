@@ -2,6 +2,7 @@
 A gridsome project with netlifyCMS configuration incuding an automatic load of content files (currently only json and default format supported) into GraphQL based on NetlifyCMS config.yml. Goal is to avoid double maintenance of schema in gridsome and netlifyCMS.
 
 **Note: You have to maintain your own repository in `src\admin\netlify.yml` in line 4 (backend:repo: ... )**
+More information: https://www.netlifycms.org/docs/authentication-backends/
 
 ## Details
 - This project was built via `gridsome create ...` - see https://gridsome.org/docs/
