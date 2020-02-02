@@ -10,7 +10,7 @@ A gridsome project with netlifyCMS configuration incuding an automatic load of c
 ## Get started 
 
 ### 1) Install Gridsome CLI tool if you don't have
-npm install --global @gridsome/cli
+`npm install --global @gridsome/cli`
 
 ### 2) Start Server: 
 1) `npm install`  to install dependencies
