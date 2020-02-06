@@ -5,19 +5,23 @@ import uuid from 'uuid/v4';
  * Create the control widget, this will add a form element to the cms UI
  */
 const IdControl = window.createClass({
+	
     getInitialState: function() {    return {};  },
+	
     componentDidMount: function() {
         // If this widget doesn't have an ID yet we create one using the UUID package
-        //alert("Mount?:" + this.props.value); -> Duplication inits this part, but why is UI not updated? 
         if (!this.props.value) {
-            this.props.onChange(uuid())
-            this.setState();
-            this.forceUpdate();
-        } 
-    }, 
-    handleChange() {
-        this.props.onChange(uuid());
-    },  
+            this.props.onChange(uuid());
+        }
+    },	
+	shouldComponentUpdate(nextProps, nextState){
+		if (nextProps.value !== this.props.value && this.props.value !== undefined) {
+			this.props.onChange(this.props.value); //change value back to new ID
+			return false;
+		}else{
+			return true;
+		}
+	},
     render: function() {
         return window.h('p', null , this.props.value);
     }
