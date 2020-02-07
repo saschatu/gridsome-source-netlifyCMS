@@ -232,7 +232,7 @@ class ContentLoader{
 		var gsNode = { id: content[collection.idFieldName]};
 		//loop over fields of node via schema definition (attributes not defined in schema will be ignored)
 		for (let schemaNode of collection.fields.values()){
-			if(content[schemaNode.name] !== undefined && schemaNode.name != collection.idFieldName){
+			if(schemaNode.name != collection.idFieldName){
 				//this.log(schemaNode.name + ": " + content[schemaNode.name]);
                 gsNode[schemaNode.name] = this.processEntry(schemaNode, content[schemaNode.name]);
 			}			
@@ -243,6 +243,8 @@ class ContentLoader{
 	
     // Parse Entry for given node and return representation to be added to GraphQL
 	processEntry(schemaNode, value){
+		if(value === undefined) return ""; //Return empty if undefined (so attribute is present, but empty)
+		
 		if (schemaNode.isArray()){
 		    //this is a list within a node - add ech content line in array
              var gsArray = [];
@@ -251,14 +253,12 @@ class ContentLoader{
                 //Per array entry provide the sub-node structure like for other nodes as well
                 let gsArrayEntry = {};
 				for(let schemaSubNode of schemaNode.fields.values()){
-					if(contentListEntry[schemaSubNode.name] !== undefined){
-						//Recursion - process sub node                       
-                        if(schemaSubNode.isRelation() && schemaNode.fields.size == 1){
-                            //For a list of only one relation (without other fields in list entry) it is just an array of references (created in next recursion step) avoiding a parent node per reference
-                            gsArrayEntry = this.processEntry(schemaSubNode, contentListEntry[schemaSubNode.name]);
-                        }else{
-                            gsArrayEntry[schemaSubNode.name] = this.processEntry(schemaSubNode, contentListEntry[schemaSubNode.name]);
-                        }
+					//Recursion - process sub node                       
+					if(schemaSubNode.isRelation() && schemaNode.fields.size == 1){
+						//For a list of only one relation (without other fields in list entry) it is just an array of references (created in next recursion step) avoiding a parent node per reference
+						gsArrayEntry = this.processEntry(schemaSubNode, contentListEntry[schemaSubNode.name]);
+					}else{
+						gsArrayEntry[schemaSubNode.name] = this.processEntry(schemaSubNode, contentListEntry[schemaSubNode.name]);
 					}
 				}
                 //One Array Entry processed -> add it to Array representing list
@@ -286,8 +286,3 @@ class ContentLoader{
 		if (PRINT_LOG) console.log(text);
 	}	
 }
-
-
-
-
-
