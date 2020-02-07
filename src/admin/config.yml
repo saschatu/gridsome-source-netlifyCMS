@@ -1,7 +1,7 @@
 backend:
   name: github
   branch: master # Branch to update (optional; defaults to master)
-  repo: saschatu/gridsome-with-netlifyCMS-Template #Put YOUR repo here - first time a login will popup in admin UI
+  repo: hackerstolz/gridsome-with-netlifyCMS-Template #Put YOUR repo here - first time a login will popup in admin UI
 
 # media_folder: "" # Media files will be stored in the repo under images/uploads
 media_folder: "static/images/uploads"
