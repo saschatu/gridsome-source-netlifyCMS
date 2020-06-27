@@ -1,0 +1,48 @@
+=== Query for Hackathon === 
+query{
+	hackathon(id: "<ID>"){
+		title # Title 
+		active # Active 
+		logo # Logo 
+		descriptions{ # Descriptions 
+			language # Language 
+			description # Description 
+		} 
+	}
+} 
+=== Query for Challenge === 
+query{
+	challenge(id: "<ID>"){
+		title # Title 
+		hackathon{ # Hackathon 
+			title # Title 
+			active # Active 
+			logo # Logo 
+			descriptions{ # Descriptions 
+				language # Language 
+				description # Description 
+			} 
+		} 
+		descriptions{ # Descriptions 
+			language # Language 
+			description # Description 
+		} 
+		categories{ # Categories 
+			title # Title 
+			descriptions{ # Descriptions 
+				language # Language 
+				description # Description 
+			} 
+		} 
+	}
+} 
+=== Query for Category === 
+query{
+	category(id: "<ID>"){
+		title # Title 
+		descriptions{ # Descriptions 
+			language # Language 
+			description # Description 
+		} 
+	}
+} 

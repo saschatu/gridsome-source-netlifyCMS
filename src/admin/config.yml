@@ -15,10 +15,8 @@ collections:
     format: json
     extension: json
     slug: "hackathon-{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}"
-    identifier_field: id
     summary: "{{title}}"
     fields:
-      - {label: "ID", name: "id", widget: "hidden", default: "hackathon"}
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Active", name: "active", widget: "boolean", default: false}
       - label: "Logo"
@@ -39,18 +37,16 @@ collections:
     folder: "content/challenges"
     create: true
     format: json
-    slug: "{{slug}}"
-    identifier_field: id
-    summary: "{{title}} ({{id}})"
+    slug: "challenge-{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}"
+    summary: "{{title}}"
     fields:
-      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
       - {label: "Title", name: "title", widget: "string"}
       - label: Hackathon
         name: hackathon
         widget: "relation"
         collection: "hackathon"
-        searchFields: ["id", "title"]
-        valueField: "id"
+        searchFields: ["title"]
+        valueField: "{{slug}}"
         displayFields: ["title"]
       - label: Descriptions
         name: descriptions
@@ -66,19 +62,17 @@ collections:
             name: category
             widget: "relation"
             collection: "category"
-            searchFields: ["id", "title"]
-            valueField: "id"
+            searchFields: ["title"]
+            valueField: "{{slug}}"
             displayFields: ["title"]
   - name: "category"
     label: "Category"
     folder: "content/categories"
     format: json
     create: true
-    slug: "{{slug}}"
-    identifier_field: id
-    summary: "{{title}} ({{id}})"
+    slug: "category-{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}"
+    summary: "{{title}}"
     fields:
-      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
       - {label: "Title", name: "title", widget: "string"}
       - label: Descriptions
         name: descriptions

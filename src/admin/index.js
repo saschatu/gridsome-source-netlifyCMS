@@ -1,7 +1,7 @@
 import CMS from "netlify-cms";
-import uuid from 'uuid/v4';
+//import uuid from 'uuid/v4';
 
-
+/**
 //Create the control widget, this will add a form element to the cms UI
 const IdControl = window.createClass({
 	
@@ -38,11 +38,12 @@ const IdPreview = window.createClass({
 // Register the widget. This lets NetlifyCMS know about our custom widget
 CMS.registerWidget('uuid', IdControl, IdPreview);
 
-/**
 
 CMS.registerEventListener({
   name: 'preSave',
   handler: ({ entry }) => {
+    return entry.get('data').set('id', uuid());
+    /**
     console.log(`preSave triggered!!! with: ${entry.get('data').get('gen_id')}`);
     if (entry.get('data').get('gen_id') === undefined){
         //new entry
@@ -53,4 +54,5 @@ CMS.registerEventListener({
         return;
     }
   },
-});*/
+});
+*/

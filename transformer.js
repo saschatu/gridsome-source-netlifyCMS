@@ -8,9 +8,11 @@ const NC_LIST = 'list';
 const NC_RELATION = 'relation';
 const NC_DEFAULT_FORMAT = 'frontmatter';    //if format not specified
 const NC_DEFAULT_ID = 'title';              //if identifier_field not specified
+const INDENT = "\t";
 
 const SUPPORTED_FORMATS = ['json','frontmatter'];
 const PRINT_LOG = true;
+const USE_FILENAME_AS_ID = true; //Use if Slug (=Filename) is used as reference in relations (all relation must have valueField: "{{slug}}") else the identifier_field property must be set or title provided!
 
 
 exports.load = function(cmsConfigFilePath,  // full path to config file including name 
@@ -19,8 +21,10 @@ exports.load = function(cmsConfigFilePath,  // full path to config file includin
                         ){
     //Preparation: parse config.yml of NetlifyCMS to get collection's schema information and init loader
     var parser = new SchemaParser(cmsConfigFilePath);
-    if(parser.initialized){
+    if(parser.initialized){		
         var loader = new ContentLoader(parser.parseCollections(), contentRootPath, api);
+		parser.generateGraphQueries(true, "FullExampleQueries.txt");
+		parser.generateGraphQueries(false, "TrimmedExampleQueries.txt");
         loader.load();
 	}
 };
@@ -42,14 +46,31 @@ class SchemaCollection{
 	addField(fieldName, fieldNode){
 		this.fields.set(fieldName, fieldNode);
 	}
+	
+	getGraphQuery(fullExpand){
+		return "query{\n" + INDENT + this.name + '(id: "<ID>"){\n' + this.getFieldQuery(INDENT + INDENT, fullExpand) + " \n" + INDENT + "}\n}";
+	}
+	
+	getFieldQuery(indent, fullExpand){
+		var query = "";
+		for (var field of this.fields.values()) {	
+			if(query !== "") query += " \n";
+			query += field.getQuery(indent, this.fields.size, fullExpand);
+		}
+		return query;
+	}
+	
+	getIdField(){
+		return this.fields.get(this.idFieldName);
+	}
 }
 
-class SchemaNode{
-	
-	constructor(name, label, widget, parent){
+class SchemaNode{	
+	constructor(name, label, widget, collections, parent){
 		this.name = name;
 		this.label = label;
 		this.widget = widget;		
+		this.collections = collections;
 		this.parent = parent; //keep reference to parent
 		this.fields = new Map();
 		this.relation = {
@@ -70,6 +91,32 @@ class SchemaNode{
 	addField(fieldName, fieldNode){
 		this.fields.set(fieldName, fieldNode);
 	}	
+	
+	getQuery(indent, parentListSize, fullExpand){
+		var query = "";
+		if(this.relation.collection !== ''){ //relation case
+			var relCollection = this.collections.get(this.relation.collection);
+			if(parentListSize > 1) {
+				query = indent + this.name + "{ # " + this.label + " \n";
+				query += fullExpand ? relCollection.getFieldQuery(indent + INDENT, fullExpand) : relCollection.getIdField().getQuery(indent + INDENT, parentListSize, fullExpand) + " - further fields see " + relCollection.label;
+				query += " \n" + indent + "}";
+			}else{
+				query = fullExpand ? relCollection.getFieldQuery(indent, fullExpand) : relCollection.getIdField().getQuery(indent, parentListSize, fullExpand) + " - further fields see " + relCollection.label;				
+			}
+		}else{
+			query = indent + this.name;
+			if(this.fields.size > 0){ //list case
+				query += "{ # " + this.label;
+				for (var field of this.fields.values()) {		
+					query += " \n" + field.getQuery(indent + INDENT, this.fields.size, fullExpand);
+				}
+				query += " \n" + indent + "}";				
+			}else{
+				query += " # " + this.label;
+			}
+		}		
+		return query;
+	}
 }
 
 class SchemaParser{
@@ -80,8 +127,12 @@ class SchemaParser{
 		try{
             var file = fs.readFileSync(cmsConfigFile, 'utf8');
             this.doc = yaml.parseDocument(file);
-
-            this.log("Schema Parser initialized with " + cmsConfigFile);
+			if(this.doc.contents === undefined){
+				this.log("ERROR: Reading schema from file " + cmsConfigFile + " failed!");
+				this.initialized = false;
+			}else{
+				this.log("Schema Parser initialized with " + cmsConfigFile);
+			}
          }catch(err){
              this.log("Error: " + err);
              this.initialized = false;
@@ -126,6 +177,7 @@ class SchemaParser{
 											name,
 											configNodeField.get('label'),
 											configNodeField.get('widget'),
+											this.collections, //for retrieving infos via relations
 											schemaNode
 											);
             //Add Field to parent Node (Collection or List Field)
@@ -142,6 +194,18 @@ class SchemaParser{
 			}		
 			i++;
 		}
+	}
+	
+	generateGraphQueries(fullExpand, fileName){
+		var queryFile = "";
+		for (const collection of this.collections.values()) {			
+			queryFile += "=== Query for " + collection.label + " === \n" + collection.getGraphQuery(fullExpand) + " \n" ;			
+		}
+		
+		fs.writeFile(fileName, queryFile, function (err) {
+			if (err) console.log("ERROR when saving Query: " + err.toString());
+			console.log("Saved queries in file");
+		});
 	}
 	
 	log(text){
@@ -192,7 +256,7 @@ class ContentLoader{
                             case 'json':
                                 if(dirFile.name.includes('.json')){
                                     let content = JSON.parse(file);
-                                    this.processContent(collection, content);
+                                    this.processContent(collection, content, dirFile.name);
                                 }else{
                                     this.log("Skipped " + dirFile.name + ": Filename extension does not match specified format for collection (" + collection.format + ")");
                                 }
@@ -204,7 +268,7 @@ class ContentLoader{
                                        //adding the "content" part as body to the rest of the attributes
                                        metadata.body = content;  
                                     }
-                                    this.processContent(collection, metadata);
+                                    this.processContent(collection, metadata, dirFile.name);
                                 }else{
                                     this.log("Skipped " + dirFile.name + ": Filename extension does not match specified format for collection (" + collection.format + ")");
                                 }
@@ -224,18 +288,28 @@ class ContentLoader{
 	}
     
     // Parse Content/File for given collection and add as node to this collection
-	processContent(collection, content){ 
-        //Ensure that ID is provided
-		if(content[collection.idFieldName] === undefined){
-		    return this.log("Skipped " + path + ": ID field '" + collection.idFieldName + "' missing");
-		}
-		var gsNode = { id: content[collection.idFieldName]};
+	processContent(collection, content, fileName){
+        
+        var id = "";
+        //Identify ID
+        if(USE_FILENAME_AS_ID){            
+            id = fileName.split(".")[0];
+        }else{
+            if(content[collection.idFieldName] === undefined){
+                return this.log("Skipped " + path + ": ID field '" + collection.idFieldName + "' missing");
+            }
+            id = content[collection.idFieldName];
+        }
+        //new instance
+        var gsNode = { id: id};
+        
 		//loop over fields of node via schema definition (attributes not defined in schema will be ignored)
 		for (let schemaNode of collection.fields.values()){
-			if(schemaNode.name != collection.idFieldName){
+			//if(schemaNode.name != collection.idFieldName){
+            if(schemaNode.name != "id"){ //id is reserved field
 				//this.log(schemaNode.name + ": " + content[schemaNode.name]);
                 gsNode[schemaNode.name] = this.processEntry(schemaNode, content[schemaNode.name]);
-			}			
+			}		
 		}
 		//all fields collected for Node -> add to Collection
         collection.gsCollection.addNode(gsNode);
@@ -243,42 +317,46 @@ class ContentLoader{
 	
     // Parse Entry for given node and return representation to be added to GraphQL
 	processEntry(schemaNode, value){
-		if(value === undefined) return ""; //Return empty if undefined (so attribute is present, but empty)
+		//if(value === undefined && !schemaNode.isRelation()) return ""; //Return empty if undefined (so attribute is present, but empty) - Empty Relation handled later
+        var returnValue = ( value === undefined ) ? "" : value;
 		
 		if (schemaNode.isArray()){
 		    //this is a list within a node - add ech content line in array
              var gsArray = [];
 			//value is an array -> process list entries recursive
-			for (let contentListEntry of value){
-                //Per array entry provide the sub-node structure like for other nodes as well
-                let gsArrayEntry = {};
-				for(let schemaSubNode of schemaNode.fields.values()){
-					//Recursion - process sub node                       
-					if(schemaSubNode.isRelation() && schemaNode.fields.size == 1){
-						//For a list of only one relation (without other fields in list entry) it is just an array of references (created in next recursion step) avoiding a parent node per reference
-						gsArrayEntry = this.processEntry(schemaSubNode, contentListEntry[schemaSubNode.name]);
-					}else{
-						gsArrayEntry[schemaSubNode.name] = this.processEntry(schemaSubNode, contentListEntry[schemaSubNode.name]);
-					}
-				}
-                //One Array Entry processed -> add it to Array representing list
-                gsArray.push(gsArrayEntry);
-			}
+            if(value !== undefined){
+                for (let contentListEntry of value){
+                    //Per array entry provide the sub-node structure like for other nodes as well
+                    let gsArrayEntry = {};
+                    for(let schemaSubNode of schemaNode.fields.values()){
+                        //Recursion - process sub node                       
+                        if(schemaSubNode.isRelation() && schemaNode.fields.size == 1){
+                            //For a list of only one relation (without other fields in list entry) it is just an array of references (created in next recursion step) avoiding a parent node per reference
+                            gsArrayEntry = this.processEntry(schemaSubNode, contentListEntry[schemaSubNode.name]);
+                        }else{
+                            gsArrayEntry[schemaSubNode.name] = this.processEntry(schemaSubNode, contentListEntry[schemaSubNode.name]);
+                        }
+                    }
+                    //One Array Entry processed -> add it to Array representing list
+                    gsArray.push(gsArrayEntry);
+                }
+            }        
 			//after processing all entries, return array to be added in parent node
 			return gsArray; //this.api.store.createReference(....);
 		}else if (schemaNode.isRelation()){
 			//A reference to another node - value is the ID of referenced node
 			//this.log(value + " in " + schemaNode.parent.name + "." + schemaNode.name + " references to " + schemaNode.relation.collection + "." + schemaNode.relation.idFieldName);
+            
             if(!this.schemaCollections.has(schemaNode.relation.collection) || this.schemaCollections.get(schemaNode.relation.collection).isBlocked){
                 this.log("Reference Skipped: Collection " + schemaNode.relation.collection + " not loaded");
-                return value;
+                return returnValue;
             }else{
-                return this.api.store.createReference(schemaNode.relation.collection, value);                
+                return this.api.store.createReference(schemaNode.relation.collection, returnValue);                
             }
 		}else{
 			//standard field having just a value
 			//this.log(value + " in " + schemaNode.parent.name + "." + schemaNode.name);
-			return value;
+			return returnValue;
 		}
 	}
 	
