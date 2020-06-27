@@ -1,5 +1,5 @@
 ---
 id: secondId
-title: test
-generated_slug: 23cfdd24-b5cc-446e-aa88-66e70685882e
+title: test2
+generated_slug: 99532bc9-7492-43b9-8545-c320fc780aa2
 ---
