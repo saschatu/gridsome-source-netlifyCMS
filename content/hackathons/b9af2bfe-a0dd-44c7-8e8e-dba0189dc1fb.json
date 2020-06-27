@@ -1,16 +1,45 @@
 {
-  "id": "b9af2bfe-a0dd-44c7-8e8e-dba0189dc1fb",
-  "title": "A Hackathon",
-  "active": true,
-  "logo": "/images/uploads/favicon.png",
-  "descriptions": [
+  "partial": false,
+  "path": "content/hackathons/b9af2bfe-a0dd-44c7-8e8e-dba0189dc1fb.json",
+  "meta": {
+    "path": "content/hackathons/b9af2bfe-a0dd-44c7-8e8e-dba0189dc1fb.json"
+  },
+  "isModification": null,
+  "raw": "{\n  \"id\": \"b9af2bfe-a0dd-44c7-8e8e-dba0189dc1fb\",\n  \"title\": \"A Hackathon\",\n  \"active\": true,\n  \"logo\": \"/images/uploads/favicon.png\",\n  \"descriptions\": [\n    {\n      \"language\": \"EN\",\n      \"description\": \"Only englisch description\"\n    },\n    {\n      \"language\": \"DE\",\n      \"description\": \"Deutsche Beschreibung\"\n    }\n  ]\n}",
+  "data": {
+    "id": "b9af2bfe-a0dd-44c7-8e8e-dba0189dc1fb",
+    "title": "A Hackathon",
+    "active": true,
+    "logo": "/images/uploads/favicon.png",
+    "descriptions": [
+      {
+        "language": "EN",
+        "description": "Only englisch description"
+      },
+      {
+        "language": "DE",
+        "description": "Deutsche Beschreibung"
+      }
+    ]
+  },
+  "author": "",
+  "slug": "b9af2bfe-a0dd-44c7-8e8e-dba0189dc1fb",
+  "newRecord": false,
+  "status": "",
+  "mediaFiles": [
     {
-      "language": "EN",
-      "description": "Only englisch description"
-    },
-    {
-      "language": "DE",
-      "description": "Deutsche Beschreibung"
+      "id": "65ae20d19ae7a5a910b4ace6b54795e8b393ed49",
+      "name": "favicon.png",
+      "size": 30642,
+      "displayURL": {
+        "id": "65ae20d19ae7a5a910b4ace6b54795e8b393ed49",
+        "path": "static/images/uploads/favicon.png"
+      },
+      "path": "static/images/uploads/favicon.png",
+      "key": "830dae7c-5cba-4de3-9023-d42e6405dba2"
     }
-  ]
+  ],
+  "label": null,
+  "updatedOn": "",
+  "collection": "hackathon"
 }
