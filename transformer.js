@@ -171,7 +171,12 @@ class SchemaParser{
         //Parse each field and gets its metadata
 		while(configNode.hasIn([NC_FIELDS,i])){            
 			let configNodeField = configNode.getIn([NC_FIELDS,i]);
-			let name = configNodeField.get('name');
+			//Get and check name of field
+            let name = configNodeField.get('name');
+            if (name == "id" && ( name != schemaNode.idFieldName || USE_FILENAME_AS_ID )){                
+                console.log(`WARNING field "id" in ${schemaNode.name} will be overwritten with actual ID.`);
+            }
+            
             //Create Schema Node
 			let schemaField = new SchemaNode(
 											name,
