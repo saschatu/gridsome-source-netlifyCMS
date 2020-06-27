@@ -13,11 +13,12 @@ collections:
     folder: "content/hackathons" # The path to the folder where the documents are stored
     create: true # Allow users to create new documents in this collection
     format: json
-    slug: "{{slug}}"
+    extension: json
+    slug: "hackathon-{{year}}{{month}}{{day}}{{hour}}{{minute}}{{second}}"
     identifier_field: id
-    summary: "{{title}} ({{id}})"
+    summary: "{{title}}"
     fields:
-      - {label: "ID", name: "id", widget: "uuid", hint: "A unique string to ensure correct relations and queries"}
+      - {label: "ID", name: "id", widget: "hidden", default: "hackathon"}
       - {label: "Title", name: "title", widget: "string"}
       - {label: "Active", name: "active", widget: "boolean", default: false}
       - label: "Logo"
